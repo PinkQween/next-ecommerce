@@ -74,7 +74,3 @@ const DashboardCard = ({ title, subtitle, body }: DashboardCardProps) => {
     </Card>
   )
 }
-
-const sleep = (duration: number) => {
-  return new Promise(resolve => setTimeout(resolve, duration));
-}
