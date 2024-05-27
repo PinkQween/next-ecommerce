@@ -36,7 +36,7 @@ const ProductsTable = async () => {
         orderBy: { name: 'asc' }
     });
 
-    if (products.length < 0) return <p>No products found</p>
+    if (products.length <= 0) return <p>No products found</p>
 
     console.log(products)
 

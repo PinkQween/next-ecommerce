@@ -9,7 +9,7 @@ const ProductCard = ({ id, name, price, description, imagePath }: ProductCardPro
     return (
         <Card className="flex overflow-hidden flex-col">
             <div className="relative w-full h-auto aspect-video">
-                <Image src={imagePath} fill alt={name} />
+                <Image src={imagePath} fill alt={name} className="object-cover" />
             </div>
             <CardHeader>
                 <CardTitle>{name}</CardTitle>

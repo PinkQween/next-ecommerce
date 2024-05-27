@@ -8,6 +8,7 @@ import Image from "next/image";
 import { Card, CardDescription, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "./ui/button";
 import { FormEvent, useState } from "react";
+import { userOrderExists } from "@/lib/orders";
 
 const stripe = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string);
 
@@ -16,7 +17,7 @@ export const CheckoutForm = ({ product, clientSecret }: CheckoutFormProps) => {
         <div className="max-w-5xl w-full mx-auto space-y-8">
             <div className="flex gap-4 items-center">
                 <div className="aspect-video flex-shrink-0 w-1/2 relative">
-                    <Image src={product.imagePath} fill alt={product.name} className="object-fill" />
+                    <Image src={product.imagePath} fill alt={product.name} className="object-cover" />
                 </div>
                 <div>
                     <div className="text-lg">
@@ -32,28 +33,37 @@ export const CheckoutForm = ({ product, clientSecret }: CheckoutFormProps) => {
             </div>
 
             <Elements options={{ clientSecret }} stripe={stripe}>
-                <Form price={product.priceInCents} />
+                <Form price={product.priceInCents} prodId={product.id} />
             </Elements>
         </div>
     )
 }
 
-const Form = ({ price }: { price: number}) => {
+const Form = ({ price, prodId }: { price: number, prodId: string }) => {
     const stripe = useStripe();
     const elements = useElements();
 
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string>();
 
-    const handleSubmit = (e: FormEvent) => {
+    const [email, setEmail] = useState<string>();
+
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        if (stripe == null || elements == null) return;
+        if (stripe == null || elements == null || email == null) return;
 
         setIsLoading(true);
 
-        // TODO: check if already owned
+        ///// TODO: check if already owned
 
+        const orderExists = await userOrderExists(email, prodId);
+
+        if (orderExists) {
+            setErrorMessage("You've already purchased this product, check my orders page.");
+            setIsLoading(false);
+            return;
+        }
 
         stripe.confirmPayment({
             elements,
@@ -82,12 +92,11 @@ const Form = ({ price }: { price: number}) => {
                 <CardContent>
                     <PaymentElement />
                     <div className="mt-4">
-                        <LinkAuthenticationElement />
+                        <LinkAuthenticationElement onChange={e => setEmail(e.value.email)} />
                     </div>
                 </CardContent>
                 <CardFooter>
-                    {/* <Button className="w-full" size='lg' disabled={stripe == null || elements == null || isLoading}>{isLoading ? "Purchasing" : `Purchase - ${formatCurrency(price / 100)}`}</Button> */}
-                    <Button className="w-full" size='lg'>{isLoading ? "Purchasing" : `Purchase - ${formatCurrency(price / 100)}`}</Button>
+                    <Button className="w-full" size='lg' disabled={stripe == null || elements == null || isLoading}>{isLoading ? "Purchasing" : `Purchase - ${formatCurrency(price / 100)}`}</Button>
                 </CardFooter>
             </Card>
         </form>
