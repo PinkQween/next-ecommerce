@@ -1,6 +1,10 @@
-import { Product } from "@prisma/client";
+import { DiscountCodeType, Product } from "@prisma/client";
 
 export default interface CheckoutFormProps {
     product: Product;
-    clientSecret: string;
+    coupon?: {
+        id: string;
+        discountAmount: number;
+        discountType: DiscountCodeType;
+    }
 }
