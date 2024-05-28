@@ -7,6 +7,8 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { cache } from "@/lib/cache";
+import { RANGE_OPTIONS, getRangeOption } from "@/lib/rangeOptions"
+import { RevenueByProductChart } from ".@/components/ui/RevenueByProductChart"
 
 const getMostPopular = cache(() => {
     return db.product.findMany({

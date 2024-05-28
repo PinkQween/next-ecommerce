@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "devStart": "bun dev & stripe listen --forward-to localhost:3002/webhooks/stripe &",
     "dev": "bunx next dev",
     "build": "bunx next build",
     "start": "bunx next start",
@@ -26,6 +27,7 @@
     "next": "14.2.3",
     "prisma": "^5.14.0",
     "react": "^18",
+    "react-day-picker": "^8.10.1",
     "react-dom": "^18",
     "react-email": "^2.1.4",
     "recharts": "^2.12.7",
